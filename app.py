@@ -45,7 +45,7 @@ except FileNotFoundError as e:
 @app.route('/<path:filename>')
 def index(filename):
     print(filename)
-    if not filename:
+    if not filename or not os.path.exists(os.path.join(front_end_folder, filename)):
         filename = "index.html"
     file_path = os.path.join(front_end_folder, filename)
     print("Requested file path:", file_path)  # Debugging requested file path
@@ -53,6 +53,7 @@ def index(filename):
         print("File not found:", file_path)  # Debugging file existence
         return abort(404)  # Return 404 if file is not found
     return send_from_directory(front_end_folder, filename)
+
 
 @app.route('/static/<path:filename>')
 def serve_static(filename):
@@ -103,25 +104,6 @@ class Users(Resource):
             "query": result_list
         }
 
-class PersonalInfo(Resource):
-    def get(self):
-        data = personalInfo.find({})
-        if data:
-            data = [item for item in data]
-            for item in data:
-                item["_id"] = str(item["_id"])
-            return jsonify(data)
-        return {"message": "No personal info found"}
-
-class ContactInfo(Resource):
-    def get(self):
-        data = contactInfo.find({})
-        if data:
-            data = [item for item in data]
-            for item in data:
-                item["_id"] = str(item["_id"])
-            return jsonify(data)
-        return {"message": "No personal info found"}
 
 class Profile(Resource):
     def get(self):
@@ -154,8 +136,6 @@ class Edit(Resource):
 
 
 api.add_resource(Users , "/user")
-api.add_resource(PersonalInfo, "/personalinfo")
-api.add_resource(ContactInfo,"/contactinfo")
 # api.add_resource(Image)
 api.add_resource(Profile, "/profile")
 api.add_resource(Edit, "/updateuser")

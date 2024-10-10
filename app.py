@@ -4,6 +4,7 @@ from flask_pymongo import PyMongo
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token
 from bson import ObjectId
+import uuid
 import re
 import os
 current_directory = os.getcwd()
@@ -12,10 +13,11 @@ front_end_folder = os.path.abspath(os.path.join(current_directory, "frontend", "
 app = Flask(__name__, static_folder=os.path.join(front_end_folder, 'static'))
 CORS(app, supports_credentials=True, origins='*')
 
-app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', '#9G8G8LLVJ@pg')  # Default value for development
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'PatelSangathan')  # Default value for development
 jwt = JWTManager(app)
 
 app.config['MONGO_URI'] = os.getenv('MONGO_URI', 'mongodb+srv://parthgupta221092:9G8G8LLVJ@ecommerce-cluster.wjmddqr.mongodb.net/Social-Geathering-App?retryWrites=true&w=majority')
+# app.config['MONGO_URI'] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/Social-Gathering-App')
 mongo = PyMongo(app)
 
 users = mongo.db.users
@@ -23,6 +25,9 @@ personalInfo = mongo.db.personalInfo
 contactInfo = mongo.db.contactInfo
 # fs = GridFS(mongo.db)
 api = Api(app)
+
+UPLOAD_FOLDER = 'uploads'  # Make sure this folder exists
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 def check_file_permissions(file_path):
@@ -73,6 +78,32 @@ def serve_static(filename):
     except Exception as e:
         print("Error serving static file:", e)  # Debugging any other errors
         return abort(500)  # Return 500 for any other server errors
+
+
+
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+    if file:
+        # Generate a unique filename
+        unique_filename = f"{uuid.uuid4()}{os.path.splitext(file.filename)[1]}"  # Keep the original file extension
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+        
+        # Save the file
+        file.save(file_path)
+        
+        # Create the URL to access the uploaded file
+        file_url = f"http://127.0.0.1:8080/uploads/{unique_filename}"
+        
+        return jsonify({'filename': file_url}), 200
+
+@app.route('/uploads/<filename>', methods=['GET'])
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
 class Users(Resource):
@@ -135,6 +166,8 @@ class Edit(Resource):
         return {"message": "User updated successfully"}, 200
 
 
+
+
 api.add_resource(Users , "/user")
 # api.add_resource(Image)
 api.add_resource(Profile, "/profile")
@@ -142,3 +175,4 @@ api.add_resource(Edit, "/updateuser")
 
 if __name__ == '__main__':
     app.run(debug=True, port=8080)
+

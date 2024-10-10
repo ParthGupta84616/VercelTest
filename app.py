@@ -26,8 +26,8 @@ contactInfo = mongo.db.contactInfo
 # fs = GridFS(mongo.db)
 api = Api(app)
 
-UPLOAD_FOLDER = 'uploads'  # Make sure this folder exists
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# UPLOAD_FOLDER = 'uploads'  # Make sure this folder exists
+# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 def check_file_permissions(file_path):
@@ -81,29 +81,29 @@ def serve_static(filename):
 
 
 
-@app.route('/upload', methods=['POST'])
-def upload_file():
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file part'}), 400
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
-    if file:
-        # Generate a unique filename
-        unique_filename = f"{uuid.uuid4()}{os.path.splitext(file.filename)[1]}"  # Keep the original file extension
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+# @app.route('/upload', methods=['POST'])
+# def upload_file():
+#     if 'file' not in request.files:
+#         return jsonify({'error': 'No file part'}), 400
+#     file = request.files['file']
+#     if file.filename == '':
+#         return jsonify({'error': 'No selected file'}), 400
+#     if file:
+#         # Generate a unique filename
+#         unique_filename = f"{uuid.uuid4()}{os.path.splitext(file.filename)[1]}"  # Keep the original file extension
+#         file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
         
-        # Save the file
-        file.save(file_path)
+#         # Save the file
+#         file.save(file_path)
         
-        # Create the URL to access the uploaded file
-        file_url = f"http://127.0.0.1:8080/uploads/{unique_filename}"
+#         # Create the URL to access the uploaded file
+#         file_url = f"http://127.0.0.1:8080/uploads/{unique_filename}"
         
-        return jsonify({'filename': file_url}), 200
+#         return jsonify({'filename': file_url}), 200
 
-@app.route('/uploads/<filename>', methods=['GET'])
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+# @app.route('/uploads/<filename>', methods=['GET'])
+# def uploaded_file(filename):
+#     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
 class Users(Resource):

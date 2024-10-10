@@ -16,8 +16,8 @@ CORS(app, supports_credentials=True, origins='*')
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'PatelSangathan')  # Default value for development
 jwt = JWTManager(app)
 
-# app.config['MONGO_URI'] = os.getenv('MONGO_URI', 'mongodb+srv://parthgupta221092:9G8G8LLVJ@ecommerce-cluster.wjmddqr.mongodb.net/Social-Geathering-App?retryWrites=true&w=majority')
-app.config['MONGO_URI'] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/Social-Gathering-App')
+app.config['MONGO_URI'] = os.getenv('MONGO_URI', 'mongodb+srv://parthgupta221092:9G8G8LLVJ@ecommerce-cluster.wjmddqr.mongodb.net/Social-Geathering-App?retryWrites=true&w=majority')
+# app.config['MONGO_URI'] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/Social-Gathering-App')
 mongo = PyMongo(app)
 
 users = mongo.db.users

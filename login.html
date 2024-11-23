@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Patel Sangathan</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      /* Custom Styles */
+      .header {
+        padding-left: 1rem;
+        padding-right: 1rem;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        height: 90px;
+        background-color: #d1d5db;
+      }
+
+      .logo-container {
+        display: flex;
+        gap: 0.5rem;
+        font-weight: bold;
+        font-size: 1.25rem;
+      }
+
+      .logo-container img {
+        width: 60px;
+        height: 60px;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+      }
+
+      .nav-links a {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        color: #333;
+        text-decoration: none;
+      }
+
+      .nav-links a:hover {
+        color: #007bff;
+      }
+
+      /* Mobile Menu */
+      .menu-toggle {
+        display: none;
+      }
+
+      .menu-icon {
+        fill: #333;
+        cursor: pointer;
+      }
+      .footer-container {
+        background-color: #d1d5db; /* light red background */
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .footer-logo {
+        display: flex;
+        align-items: center;
+        font-size: 1.25rem;
+        color: #333;
+      }
+
+      .footer-logo img {
+        width: 90px;
+        height: 90px;
+        margin-right: 20px;
+      }
+
+      .footer-logo span {
+        font-weight: bold;
+      }
+
+      .footer-text {
+        font-size: 0.875rem;
+        color: #333;
+        margin-top: 2rem;
+        margin-left: 30px;
+      }
+
+      .footer-text a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .footer-text a:hover {
+        color: #007bff;
+      }
+
+      @import url("https://fonts.googleapis.com/css?family=Raleway:400,700");
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: Raleway, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(90deg, #c7c5f4, #776bcc);
+      }
+
+      .container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 110vh;
+      }
+
+      .screen {
+        background: linear-gradient(90deg, #5d54a4, #7c78b8);
+        position: relative;
+        height: 600px;
+        width: 360px;
+        box-shadow: 0px 0px 24px #5c5696;
+      }
+
+      .screen__content {
+        z-index: 1;
+        position: relative;
+        height: 100%;
+      }
+
+      .screen__background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 0;
+        -webkit-clip-path: inset(0 0 0 0);
+        clip-path: inset(0 0 0 0);
+      }
+
+      .screen__background__shape {
+        transform: rotate(45deg);
+        position: absolute;
+      }
+
+      .screen__background__shape1 {
+        height: 520px;
+        width: 520px;
+        background: #fff;
+        top: -50px;
+        right: 120px;
+        border-radius: 0 72px 0 0;
+      }
+
+      .screen__background__shape2 {
+        height: 220px;
+        width: 220px;
+        background: #6c63ac;
+        top: -172px;
+        right: 0;
+        border-radius: 32px;
+      }
+
+      .screen__background__shape3 {
+        height: 540px;
+        width: 190px;
+        background: linear-gradient(270deg, #5d54a4, #6a679e);
+        top: -24px;
+        right: 0;
+        border-radius: 32px;
+      }
+
+      .screen__background__shape4 {
+        height: 400px;
+        width: 200px;
+        background: #7e7bb9;
+        top: 420px;
+        right: 50px;
+        border-radius: 60px;
+      }
+
+      .login {
+        width: 320px;
+        padding: 30px;
+        padding-top: 156px;
+      }
+
+      .login__field {
+        padding: 20px 0px;
+        position: relative;
+      }
+
+      .login__icon {
+        position: absolute;
+        top: 30px;
+        color: #7875b5;
+      }
+
+      .login__input {
+        border: none;
+        border-bottom: 2px solid #d1d1d4;
+        background: none;
+        padding: 10px;
+        padding-left: 24px;
+        font-weight: 700;
+        width: 75%;
+        transition: 0.2s;
+      }
+
+      .login__input:active,
+      .login__input:focus,
+      .login__input:hover {
+        outline: none;
+        border-bottom-color: #6a679e;
+      }
+
+      .login__submit {
+        background: #fff;
+        font-size: 14px;
+        margin-top: 30px;
+        padding: 16px 20px;
+        border-radius: 26px;
+        border: 1px solid #d4d3e8;
+        text-transform: uppercase;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        color: #4c489d;
+        box-shadow: 0px 2px 2px #5c5696;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .login__submit:active,
+      .login__submit:focus,
+      .login__submit:hover {
+        border-color: #6a679e;
+        outline: none;
+      }
+
+      .button__icon {
+        font-size: 24px;
+        margin-left: auto;
+        color: #7875b5;
+      }
+
+      .social-login {
+        position: absolute;
+        height: 140px;
+        width: 160px;
+        text-align: center;
+        bottom: 0px;
+        right: 0px;
+        color: #fff;
+      }
+
+      .social-icons {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .social-login__icon {
+        padding: 20px 10px;
+        color: #fff;
+        text-decoration: none;
+        text-shadow: 0px 0px 8px #7875b5;
+      }
+
+      .social-login__icon:hover {
+        transform: scale(1.5);
+      }
+      /* For smaller screen sizes */
+      @media screen and (max-width: 768px) {
+        .footer-container {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .footer-text {
+          margin-top: 40px;
+        }
+      }
+
+      @media screen and (max-width: 768px) {
+        .nav-links {
+          display: none;
+          flex-direction: column;
+          width: 100%;
+          padding-top: 1rem;
+        }
+
+        .menu-toggle:checked + .nav-links {
+          display: flex;
+        }
+
+        .menu-toggle:checked + .nav-links li {
+          padding: 1rem;
+          border-top: 1px solid #ddd;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="logo-container mx-16">
+        <a href="/" class="flex gap-2 items-center">
+          <img
+            src="https://patelsanghmp.com/uploads/8205a257-4259-4f67-98fb-20b922d733d8.png"
+            alt="logo"
+            class="w-10"
+          />
+          <h1 class="text-2xl">Patel Sangathan</h1>
+        </a>
+      </div>
+
+      <nav>
+        <ul class="nav-links mr-20">
+          <li><a href="/register">Register</a></li>
+          <li><a href="/search">Search</a></li>
+        </ul>
+      </nav>
+    </header>
+    <div class="container">
+      <div class="screen">
+        <div class="screen__content">
+          <form class="login" id="login-form">
+            <div class="login__field">
+              <i class="login__icon fas fa-user"></i>
+              <input
+                type="text"
+                class="login__input"
+                id="username"
+                name="username"
+                placeholder="User name / Email"
+                required
+              />
+            </div>
+            <div class="login__field">
+              <i class="login__icon fas fa-lock"></i>
+              <input
+                type="password"
+                class="login__input"
+                id="password"
+                name="password"
+                placeholder="Password"
+                required
+              />
+            </div>
+            <button type="submit" class="button login__submit">
+              <span class="button__text">Log In Now</span>
+              <i class="button__icon fas fa-chevron-right"></i>
+            </button>
+          </form>
+
+          <div class="social-login">
+            <h3>log in via</h3>
+            <div class="social-icons">
+              <a href="#" class="social-login__icon fab fa-instagram"></a>
+              <a href="#" class="social-login__icon fab fa-facebook"></a>
+              <a href="#" class="social-login__icon fab fa-twitter"></a>
+            </div>
+          </div>
+        </div>
+
+        <div class="screen__background">
+          <span
+            class="screen__background__shape screen__background__shape4"
+          ></span>
+          <span
+            class="screen__background__shape screen__background__shape3"
+          ></span>
+          <span
+            class="screen__background__shape screen__background__shape2"
+          ></span>
+          <span
+            class="screen__background__shape screen__background__shape1"
+          ></span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-container">
+      <footer class="max-w-7xl flex item-center ml-16">
+        <!-- Left Section with Logo -->
+        <div class="footer-logo">
+          <img
+            src="https://patelsanghmp.com/uploads/8205a257-4259-4f67-98fb-20b922d733d8.png"
+            alt="logo"
+          />
+          <span>Patel Sangathan</span>
+        </div>
+
+        <!-- Right Section with Text -->
+        <p class="footer-text flex item-center justify-center mt-10">
+          © 2024 Patel Sangathan —
+          <a href="https://twitter.com/patelsangathan" target="_blank"
+            >@patelsangathan</a
+          >
+        </p>
+      </footer>
+    </div>
+    <script>
+      document
+        .getElementById("login-form")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+          const username = document.getElementById("username").value;
+          const password = document.getElementById("password").value;
+
+          const response = await fetch("/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password }),
+          });
+
+          const result = await response.json();
+          if (response.ok) {
+            window.location.reload(); // Reload the app after successful login
+          } else {
+            alert(result.message);
+          }
+        });
+    </script>
+  </body>
+</html>

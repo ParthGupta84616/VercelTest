@@ -1,4 +1,4 @@
-from flask import Flask, jsonify , request ,send_from_directory , abort
+from flask import Flask, jsonify , request ,send_from_directory , abort , session
 from flask_restful import Api, Resource
 from flask_pymongo import PyMongo
 from flask_cors import CORS
@@ -28,6 +28,7 @@ api = Api(app)
 
 UPLOAD_FOLDER = 'uploads'  # Make sure this folder exists
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.secret_key = 'your_secret_key_here'
 
 
 def check_file_permissions(file_path):
@@ -41,15 +42,28 @@ def check_file_permissions(file_path):
 # Print the contents of the front_end_folder for debugging
 try:
     contents = os.listdir(front_end_folder)
-    print("Contents of the frontend build directory:", contents)
+    # print("Contents of the frontend build directory:", contents)
 except FileNotFoundError as e:
     print("Error:", e)
     print("The directory does not exist.")
-
+    
 @app.route('/', defaults={"filename": ""})
 @app.route('/<path:filename>')
 def index(filename):
     print(filename)
+    
+    # Check if the user is logged in (replace with your custom condition)
+    if not session.get("logged_in"):  # Example: using session for login check
+        print("User not logged in. Serving login page.")
+        login_file_path = os.path.join(current_directory, "login.html")
+        print("Serving login page:", login_file_path)
+        if os.path.exists(login_file_path):
+            return send_from_directory(current_directory, "login.html")
+        else:
+            print("Login page not found.")
+            return abort(404)  # Return 404 if login.html does not exist
+
+    # If logged in, serve the React app
     if not filename or not os.path.exists(os.path.join(front_end_folder, filename)):
         filename = "index.html"
     file_path = os.path.join(front_end_folder, filename)
@@ -58,6 +72,8 @@ def index(filename):
         print("File not found:", file_path)  # Debugging file existence
         return abort(404)  # Return 404 if file is not found
     return send_from_directory(front_end_folder, filename)
+
+
 
 
 @app.route('/static/<path:filename>')
@@ -90,7 +106,7 @@ def upload_file():
         return jsonify({'error': 'No selected file'}), 400
     if file:
         # Generate a unique filename
-        unique_filename = f"{uuid.uuid4()}{os.path.splitext(file.filename)[1]}"  # Keep the original file extension
+        unique_filename = f"{uuid.uuid4()}{os.path.splitext(file.filename)[1]}" 
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
         
         # Save the file
@@ -104,6 +120,24 @@ def upload_file():
 @app.route('/uploads/<filename>', methods=['GET'])
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.get_json()
+    username = data.get("username")
+    password = data.get("password")
+    
+    # Hardcoded credentials (replace with proper user validation logic)
+    if username == "admin" and password == "admin":
+        session["logged_in"] = True  # Set session to indicate logged-in status
+        response = jsonify({"message": "Login successful"})
+        return response, 200
+    
+    # If credentials are invalid
+    return jsonify({"message": "Invalid credentials"}), 401
+
+
 
 
 class Users(Resource):
@@ -120,20 +154,27 @@ class Users(Resource):
 
         return jsonify({'message': 'Image uploaded and compressed successfully', 'inserted_id': str(inserted_id)}), 200
 
-    def get(self):
+    @app.route('/user', methods=['GET'])
+    def search_user():
         query = request.args.get("search")
-        regex = re.compile(query, re.IGNORECASE)  # create a regex object, case-insensitive
-        results = users.find({"मो": regex})
+        if query:
+            regex = re.compile(query, re.IGNORECASE)  # create a regex object, case-insensitive
+            print(regex)
+            results = users.find({
+                "$or": [
+                    {"मो": regex},
+                    {"तहसील": regex}
+                ]
+            }, collation={"locale": "en", "strength": 2})  # set collation for case-insensitive search
 
-        result_list = []
-        for result in results:
-            result["_id"] = str(result["_id"])
-            # print(result)
-            result_list.append(result)
+            result_list = []
+            for result in results:
+                result["_id"] = str(result["_id"])
+                result_list.append(result)
 
-        return {
-            "query": result_list
-        }
+            return jsonify({"query": result_list})
+        else:
+            return jsonify({"query": []})
 
 
 class Profile(Resource):
